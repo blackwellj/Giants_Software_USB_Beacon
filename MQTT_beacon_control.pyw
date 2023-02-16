@@ -1,7 +1,13 @@
 import paho.mqtt.client as mqtt
 import giants_beacon
 
-def on_message(client, userdata, msg):
-    giants_beacon.GiantsBeacon().device_state(msg.payload.decode())
+beacon = giants_beacon.GiantsBeacon()
 
-mqtt.Client().connect("10.1.1.2", 1883, 60).subscribe("beacon", on_message).loop_forever()
+def on_message(client, userdata, msg):
+    beacon.device_state(msg.payload.decode())
+
+client = mqtt.Client()
+client.connect("10.1.1.2", 1883, 60)
+client.on_message = on_message
+client.subscribe("beacon")
+client.loop_forever()
